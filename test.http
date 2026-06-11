@@ -1,0 +1,7 @@
+POST http://localhost:5000/api/process
+Content-Type: application/json
+
+{
+  "leadName": "Anurag",
+  "company": "SubSpace"
+}
