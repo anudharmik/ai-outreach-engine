@@ -41,6 +41,7 @@ new Worker(
       generatedResponse: aiResponse,
       status: "completed",
       createdAt: new Date().toISOString(),
+      isLoadTest: job.data.isLoadTest ?? false,
     });
 
     console.log(`Completed ${job.id}`);
