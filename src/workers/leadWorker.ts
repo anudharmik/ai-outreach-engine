@@ -30,6 +30,7 @@ new Worker(
         inputMessage: `Lead from ${job.data.company}`,
         generatedResponse: aiResponse,
         status: "completed",
+        isLoadTest: job.data.isLoadTest ?? false,
       },
     });
 

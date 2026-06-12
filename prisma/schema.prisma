@@ -27,4 +27,5 @@ model ProcessedMessage {
   lead              Lead @relation(fields: [leadId], references: [id])
 
   createdAt         DateTime @default(now())
+  isLoadTest        Boolean @default(false)
 }

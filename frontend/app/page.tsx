@@ -10,6 +10,7 @@ interface JobData {
   generatedResponse?: string;
   status?: string;
   createdAt?: string;
+  isLoadTest?: boolean;
 }
 
 export default function Home() {
@@ -47,6 +48,7 @@ export default function Home() {
         generatedResponse: item.generatedResponse,
         status: item.status,
         createdAt: item.createdAt,
+        isLoadTest: item.isLoadTest,
       }));
 
       setJobs(formatted);
@@ -66,6 +68,24 @@ export default function Home() {
     
   }, []);
 
+  const totalJobs = jobs.length;
+  const today = new Date().toLocaleDateString();
+
+  const todaysJobs = jobs.filter(
+    (job) =>
+      new Date(
+        job.createdAt || Date.now()
+      ).toLocaleDateString() === today
+  );
+
+  const loadTestJobs = jobs.filter(
+    (job) => job.isLoadTest
+  );
+
+  const aiJobs = jobs.filter(
+    (job) => !job.isLoadTest
+  );
+
 
 
   return (
@@ -74,10 +94,30 @@ export default function Home() {
         <h1 className="text-4xl font-bold mb-8">
           AI Outreach Engine
         </h1>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
-        <p className="mb-6 text-gray-600">
-          Real-time completed jobs
-        </p>
+        <div className="border rounded-lg p-4">
+          <p className="text-sm text-gray-500">Total Jobs</p>
+          <p className="text-2xl font-bold">{totalJobs}</p>
+        </div>
+
+        <div className="border rounded-lg p-4">
+          <p className="text-sm text-gray-500">Today's Jobs</p>
+          <p className="text-2xl font-bold">{todaysJobs.length}</p>
+        </div>
+
+        <div className="border rounded-lg p-4">
+          <p className="text-sm text-gray-500">AI Jobs</p>
+          <p className="text-2xl font-bold">{aiJobs.length}</p>
+        </div>
+
+        <div className="border rounded-lg p-4">
+          <p className="text-sm text-gray-500">Load Test Jobs</p>
+          <p className="text-2xl font-bold">{loadTestJobs.length}</p>
+        </div>
+      </div>
+
+        <p className="mb-6 text-gray-600">Real-time completed jobs</p>
 
       <button
         onClick={async () => {
@@ -125,6 +165,13 @@ export default function Home() {
                       key={index}
                       className="border p-4 rounded"
                     >
+                      <p>
+                        <strong>Type:</strong>{" "}
+                        {job.isLoadTest
+                          ? "Load Test"
+                          : "AI Job"}
+                      </p>
+
                       <p>
                         <strong>Name:</strong>{" "}
                         {job.leadName}
