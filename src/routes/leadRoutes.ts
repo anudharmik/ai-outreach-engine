@@ -31,7 +31,7 @@ router.post("/process", async (req, res) => {
       orderBy: {
         createdAt: "desc",
       },
-      take: 100,
+      take: 1000,
       include: {
         lead: true,
       },
