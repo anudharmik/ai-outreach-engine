@@ -7,6 +7,9 @@ interface JobData {
   leadId: string;
   leadName: string;
   company: string;
+  generatedResponse?: string;
+  status?: string;
+  createdAt?: string;
 }
 
 export default function Home() {
@@ -24,6 +27,9 @@ export default function Home() {
         leadId: item.lead.id,
         leadName: item.lead.name,
         company: item.lead.company,
+        generatedResponse: item.generatedResponse,
+        status: item.status,
+        createdAt: item.createdAt,
       }));
 
       setJobs(formatted);
@@ -53,6 +59,20 @@ export default function Home() {
           Real-time completed jobs
         </p>
 
+      <button
+        onClick={async () => {
+          await fetch(
+            "http://localhost:5000/api/simulate-load",
+            {
+              method: "POST",
+            }
+          );
+        }}
+        className="bg-black text-white px-4 py-2 rounded mb-6"
+      >
+        Simulate 50 Jobs
+      </button>
+
         <div className="space-y-4">
           {jobs.length === 0 ? (
             <div className="border rounded-lg p-4">
@@ -75,6 +95,18 @@ export default function Home() {
                 <p>
                   <strong>Lead ID:</strong> {job.leadId}
                 </p>
+
+                <p>
+                <strong>Status:</strong> {job.status}
+                </p>
+
+              <div className="mt-3">
+                <strong>AI Response:</strong>
+
+                <p className="mt-2 text-sm text-gray-700">
+                  {job.generatedResponse}
+                </p>
+              </div>
               </div>
             ))
           )}

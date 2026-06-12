@@ -22,5 +22,5 @@ Generate a short personalized outreach message.
     contents: prompt,
   });
 
-  return response.text;
+  return response.text ?? "";
 }

@@ -8,17 +8,38 @@ new Worker(
   async (job) => {
     console.log(`Processing ${job.id}`);
 
-    const aiResponse =
-      await generateOutreachMessage(
-        job.data.leadName,
-        job.data.company
+    let aiResponse = "";
+
+    if (job.data.isLoadTest) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, 1000)
       );
+
+      aiResponse = `Mock outreach generated for ${job.data.company}`;
+
+      getIO().emit("jobCompleted", {
+        leadId: job.data.leadId,
+        leadName: job.data.leadName,
+        company: job.data.company,
+        generatedResponse: aiResponse,
+        status: "completed",
+      });
+
+      console.log(`Completed Load Test ${job.id}`);
+
+      return;
+    }
+
+    aiResponse = await generateOutreachMessage(
+      job.data.leadName,
+      job.data.company
+    );
 
     await prisma.processedMessage.create({
       data: {
         leadId: job.data.leadId,
         inputMessage: `Lead from ${job.data.company}`,
-        generatedResponse: aiResponse || "",
+        generatedResponse: aiResponse,
         status: "completed",
       },
     });
@@ -27,7 +48,9 @@ new Worker(
       leadId: job.data.leadId,
       leadName: job.data.leadName,
       company: job.data.company,
-    }); 
+      generatedResponse: aiResponse,
+      status: "completed",
+    });
 
     console.log(`Completed ${job.id}`);
   },
@@ -36,5 +59,6 @@ new Worker(
       host: "localhost",
       port: 6379,
     },
+    concurrency: 5,
   }
 );

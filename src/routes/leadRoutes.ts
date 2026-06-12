@@ -40,4 +40,26 @@ router.post("/process", async (req, res) => {
     res.json(jobs);
   });
 
+  router.post("/simulate-load", async (req, res) => {
+  const jobs = [];
+
+  for (let i = 1; i <= 50; i++) {
+    jobs.push(
+      leadQueue.add("load-test", {
+        leadId: `load-${i}`,
+        leadName: `Test Lead ${i}`,
+        company: `Company ${i}`,
+        isLoadTest: true,
+      })
+    );
+  }
+
+  await Promise.all(jobs);
+
+  res.json({
+    success: true,
+    queued: 50,
+   });
+  }); 
+
 export default router;
