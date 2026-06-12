@@ -26,5 +26,18 @@ router.post("/process", async (req, res) => {
     leadId: lead.id,
   });
 });
+  router.get("/jobs", async (req, res) => {
+    const jobs = await prisma.processedMessage.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 100,
+      include: {
+        lead: true,
+      },
+    });
+
+    res.json(jobs);
+  });
 
 export default router;

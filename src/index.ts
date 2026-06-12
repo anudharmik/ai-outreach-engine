@@ -1,15 +1,15 @@
 import dotenv from "dotenv";
 dotenv.config();
-
+import cors from "cors";
 import express from "express";
 import http from "http";
-
 import leadRoutes from "./routes/leadRoutes";
 import "./workers/leadWorker";
 import { initSocket } from "./socket";
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.use("/api", leadRoutes);
