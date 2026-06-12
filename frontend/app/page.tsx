@@ -15,6 +15,23 @@ interface JobData {
 export default function Home() {
   const [jobs, setJobs] = useState<JobData[]>([]);
 
+  const groupedJobs = jobs.reduce(
+  (acc: Record<string, JobData[]>, job) => {
+    const date = new Date(
+      job.createdAt || Date.now()
+    ).toLocaleDateString();
+
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+
+    acc[date].push(job);
+
+    return acc;
+  },{});
+
+  const [expandedDate, setExpandedDate] =useState<string | null>(null);
+
   useEffect(() => {
     const loadJobs = async () => {
       const response = await fetch(
@@ -46,7 +63,10 @@ export default function Home() {
     return () => {
       socket.disconnect();
     };
+    
   }, []);
+
+
 
   return (
     <main className="min-h-screen p-10">
@@ -79,36 +99,59 @@ export default function Home() {
               No completed jobs yet...
             </div>
           ) : (
-            jobs.map((job, index) => (
-              <div
-                key={index}
-                className="border rounded-lg p-4 shadow-sm"
+            Object.entries(groupedJobs).map(
+          ([date, dateJobs]) => (
+            <div
+              key={date}
+              className="border rounded p-4 mb-4"
+            >
+              <button
+                onClick={() =>
+                  setExpandedDate(
+                    expandedDate === date
+                      ? null
+                      : date
+                  )
+                }
               >
-                <p>
-                  <strong>Name:</strong> {job.leadName}
-                </p>
+                {expandedDate === date ? "▼" : "▶"}{" "}
+                {date} ({dateJobs.length} jobs)
+              </button>
 
-                <p>
-                  <strong>Company:</strong> {job.company}
-                </p>
+              {expandedDate === date && (
+                <div className="mt-4 space-y-4">
+                  {dateJobs.map((job, index) => (
+                    <div
+                      key={index}
+                      className="border p-4 rounded"
+                    >
+                      <p>
+                        <strong>Name:</strong>{" "}
+                        {job.leadName}
+                      </p>
 
-                <p>
-                  <strong>Lead ID:</strong> {job.leadId}
-                </p>
+                      <p>
+                        <strong>Company:</strong>{" "}
+                        {job.company}
+                      </p>
 
-                <p>
-                <strong>Status:</strong> {job.status}
-                </p>
+                      <p>
+                        <strong>Status:</strong>{" "}
+                        {job.status}
+                      </p>
 
-              <div className="mt-3">
-                <strong>AI Response:</strong>
+                      <p>
+                        <strong>AI Response:</strong>
+                      </p>
 
-                <p className="mt-2 text-sm text-gray-700">
-                  {job.generatedResponse}
-                </p>
-              </div>
-              </div>
-            ))
+                      <p>{job.generatedResponse}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+          )
           )}
         </div>
       </div>
