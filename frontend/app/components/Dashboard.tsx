@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { io } from "socket.io-client";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
 
 type JobStatus = "completed" | "failed" | "processing" | "queued" | string;
 type SocketState = "connecting" | "connected" | "disconnected";
