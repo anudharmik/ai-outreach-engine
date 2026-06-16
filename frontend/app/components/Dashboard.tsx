@@ -433,6 +433,7 @@ export default function Dashboard() {
     socket.on("connect_error", () => setSocketState("disconnected"));
 
     socket.on("jobCompleted", (data: JobData) => {
+      console.log("JOB RECEIVED", data);
       const incomingJob = {
         ...data,
         isLoadTest: data.isLoadTest ?? false,
