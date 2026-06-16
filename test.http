@@ -1,7 +1,7 @@
-POST http://localhost:5000/api/process
+POST https://ai-outreach-engine-24o8.onrender.com/api/process
 Content-Type: application/json
 
 {
-  "leadName": "Anurag",
-  "company": "StartupZ"
+  "leadName": "Render Test",
+  "company": "Company X"
 }
