@@ -3,3 +3,8 @@ node_modules
 dist
 /src/generated/prisma
 *.log
+
+# frontend subfolder artifacts (safety net — also covered by frontend/.gitignore)
+frontend/node_modules
+frontend/.next
+frontend/out
