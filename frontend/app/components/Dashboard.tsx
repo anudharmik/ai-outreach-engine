@@ -260,6 +260,76 @@ function PipelinePanel({
   );
 }
 
+function OutreachPanel({
+  leadName,
+  company,
+  isGenerating,
+  onLeadNameChange,
+  onCompanyChange,
+  onGenerate,
+}: {
+  leadName: string;
+  company: string;
+  isGenerating: boolean;
+  onLeadNameChange: (value: string) => void;
+  onCompanyChange: (value: string) => void;
+  onGenerate: () => void;
+}) {
+  return (
+    <section className="pipeline-card outreach-panel">
+      <div className="section-title">
+        <div>
+          <p className="eyebrow">AI generation</p>
+          <h2>Generate outreach</h2>
+        </div>
+        <Badge tone="purple">Gemini</Badge>
+      </div>
+
+      <div className="outreach-fields">
+        <div className="outreach-field">
+          <label htmlFor="outreach-lead-name" className="outreach-label">
+            Lead Name
+          </label>
+          <input
+            id="outreach-lead-name"
+            type="text"
+            placeholder="e.g. Sarah Chen"
+            value={leadName}
+            onChange={(e) => onLeadNameChange(e.target.value)}
+            className="outreach-input"
+            disabled={isGenerating}
+          />
+        </div>
+
+        <div className="outreach-field">
+          <label htmlFor="outreach-company" className="outreach-label">
+            Company
+          </label>
+          <input
+            id="outreach-company"
+            type="text"
+            placeholder="e.g. Acme Corp"
+            value={company}
+            onChange={(e) => onCompanyChange(e.target.value)}
+            className="outreach-input"
+            disabled={isGenerating}
+          />
+        </div>
+      </div>
+
+      <button
+        className="primary-button outreach-submit"
+        onClick={onGenerate}
+        disabled={isGenerating || !leadName.trim() || !company.trim()}
+        type="button"
+      >
+        <Icon name="spark" className="h-4 w-4" />
+        {isGenerating ? "Generating…" : "Generate Outreach"}
+      </button>
+    </section>
+  );
+}
+
 function JobCard({ job }: { job: JobData }) {
   const isLoadTest = Boolean(job.isLoadTest);
   const status = job.status || "completed";
@@ -387,6 +457,9 @@ export default function Dashboard() {
   const [isSimulating, setIsSimulating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [socketState, setSocketState] = useState<SocketState>("connecting");
+  const [leadName, setLeadName] = useState("");
+  const [company, setCompany] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -450,6 +523,7 @@ export default function Dashboard() {
     };
   }, []);
 
+
   const groupedJobs = useMemo<JobGroup[]>(() => {
     const groups = jobs.reduce<Record<string, JobData[]>>((acc, job) => {
       const key = toDateKey(job.createdAt);
@@ -506,6 +580,33 @@ export default function Dashboard() {
     }
   };
 
+  const handleGenerateOutreach = async () => {
+  if (!leadName.trim() || !company.trim()) return;
+
+  try {
+    setIsGenerating(true);
+
+    await fetch(`${API_URL}/api/process`, {
+      method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          leadName,
+          company,
+        }),
+      });
+
+      setLeadName("");
+      setCompany("");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+
   return (
     <main className="dashboard-shell">
       <div className="dashboard-grid" />
@@ -544,7 +645,17 @@ export default function Dashboard() {
         </section>
 
         <div className="main-layout">
-          <PipelinePanel isLoading={isLoading} latestJob={latestJob} />
+          <div className="sidebar-column">
+            <PipelinePanel isLoading={isLoading} latestJob={latestJob} />
+            <OutreachPanel
+              leadName={leadName}
+              company={company}
+              isGenerating={isGenerating}
+              onLeadNameChange={setLeadName}
+              onCompanyChange={setCompany}
+              onGenerate={handleGenerateOutreach}
+            />
+          </div>
 
           <section className="jobs-panel">
             <div className="section-title">

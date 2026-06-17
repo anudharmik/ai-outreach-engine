@@ -661,6 +661,78 @@ button:disabled {
   }
 }
 
+/* ── Sidebar column (pipeline + outreach stacked) ── */
+.sidebar-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 20px;
+}
+
+.sidebar-column .pipeline-card {
+  position: static;
+}
+
+/* ── Outreach panel ── */
+.outreach-panel {
+  padding: 20px;
+}
+
+.outreach-fields {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.outreach-field {
+  display: grid;
+  gap: 5px;
+}
+
+.outreach-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.outreach-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--foreground);
+  font-size: 0.9rem;
+  padding: 10px 12px;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.outreach-input::placeholder {
+  color: var(--muted);
+}
+
+.outreach-input:focus {
+  outline: none;
+  border-color: rgba(167, 139, 250, 0.5);
+  background: rgba(167, 139, 250, 0.05);
+}
+
+.outreach-input:disabled {
+  opacity: 0.55;
+}
+
+.outreach-submit {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
 @media (max-width: 980px) {
   .dashboard-header,
   .main-layout {
